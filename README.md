@@ -49,6 +49,12 @@ The provided Python file demonstrates how to use the classifier with arbitrary 1
 To run the inference, please run the following command:
 ```
 python inference.py --audio_file <your audio file path> --model_path <path to Huggingface model>
+# e.g.
+python inference.py --audio_file audio/nsfw.wav
+```
+Interactive demo can be hosted with following
+```
+python app.py
 ```
 You can download the model weights from the model releases page [here](https://github.com/Roblox/voice-safety-classifier/releases/tag/vs-classifier-v2),
 or from HuggingFace under [`roblox/voice-safety-classifier-v2`](https://huggingface.co/Roblox/voice-safety-classifier-v2).
