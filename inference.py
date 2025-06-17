@@ -95,17 +95,21 @@ if __name__ == "__main__":
         "Profanity",
     ]
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
     # Model is trained on only 16kHz audio
     audio, _ = librosa.core.load(args.audio_file, sr=16000)
     input_np = feature_extract_simple(audio, sr=16000)
-    input_pt = torch.Tensor(input_np)
+    input_pt = torch.Tensor(input_np).to(device)
     model = WavLMForSequenceClassification.from_pretrained(
         args.model_path, num_labels=len(labels_name_list)
     )
+    model.to(device)
     probs = infer(model, input_pt)
     probs = probs.reshape(-1, 6).detach().tolist()
-    print(f"Probabilities for {args.audio_file}:")
+    print(f"\nProbabilities for {args.audio_file}:")
     for chunk_idx in range(len(probs)):
         print(f"\nSegment {chunk_idx}:")
         for label_idx, label in enumerate(labels_name_list):
-            print(f"{label} : {probs[chunk_idx][label_idx]}")
+            print(f"{probs[chunk_idx][label_idx]*100:5.1f} % | {label}")
