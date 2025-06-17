@@ -4,6 +4,8 @@ import gradio as gr
 import librosa
 import numpy as np
 import torch
+import os, shutil
+from datetime import datetime
 from transformers import WavLMForSequenceClassification
 
 
@@ -71,6 +73,13 @@ def infer(model, inputs) -> torch.Tensor:
 def predict(audio_file) -> Dict[str, Any]:
     if audio_file is None:
         return {"No prediction available": 0.0}
+    else:
+        save_dir = "recordings"
+        os.makedirs(save_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        dest = os.path.join(save_dir, f"{timestamp}.wav")
+        shutil.copy(audio_file, dest)
+        print(f"Audio saved to {dest}")
 
     try:
         input_np = feature_extract_simple(audio_file, sr=16000, do_normalize=True)
@@ -132,4 +141,4 @@ if __name__ == "__main__":
         flagging_mode="never",
     )
 
-    demo.launch()
+    demo.launch(share=True)
